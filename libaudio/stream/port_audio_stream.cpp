@@ -1,4 +1,4 @@
-#include "port_audio_stream.h"
+#include "libaudio/stream/port_audio_stream.h"
 
 namespace iamaprogrammer {
 
@@ -8,15 +8,15 @@ namespace iamaprogrammer {
    // std::cout << "AUDIO STREAM" << std::endl;
    // std::cout << "\tGetting Output Device." << std::endl;
 
-    PaDeviceIndex devicesCount = Pa_GetDeviceCount();
+    // PaDeviceIndex devicesCount = Pa_GetDeviceCount();
     // std::cout << "\tDevice Count: " << devicesCount << std::endl;
-    for (PaDeviceIndex device = 0; device < devicesCount; device++) {
-      const PaDeviceInfo* deviceInfo = Pa_GetDeviceInfo(device);
+    // for (PaDeviceIndex device = 0; device < devicesCount; device++) {
+    //  const PaDeviceInfo* deviceInfo = Pa_GetDeviceInfo(device);
 
      // std::cout << "\tDevice " << device << ": " << deviceInfo->name << std::endl;
      // std::cout << "\t\tDefault Samplerate: " << deviceInfo->defaultSampleRate << std::endl;
      // std::cout << "\t\tDefault Samplerate: " << deviceInfo->defaultSampleRate << std::endl;
-    }
+    // }
 
     PaDeviceIndex device = Pa_GetDefaultOutputDevice();
     const PaDeviceInfo* deviceInfo = Pa_GetDeviceInfo(device);
@@ -46,7 +46,7 @@ namespace iamaprogrammer {
     );
 
     Pa_SetStreamFinishedCallback(this->stream, paStreamFinishedCallback);
-    std::cout << "\tCreated Audio Stream." << std::endl;
+    //std::cout << "\tCreated Audio Stream." << std::endl;
   }
 
   void PortAudioStream::closeStream() {

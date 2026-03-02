@@ -1,4 +1,4 @@
-#include "sndlib_audio_decoder.h"
+#include "libaudio/reader/decoder/sndlib_audio_decoder.h"
 
 namespace iamaprogrammer {
   SndlibAudioDecoder::SndlibAudioDecoder() {}
@@ -7,7 +7,7 @@ namespace iamaprogrammer {
     frameReadCount(frameReadCount) {}
 
   void SndlibAudioDecoder::open(std::filesystem::path filePath) {
-    std::cout << "READER" << std::endl;
+    // std::cout << "READER" << std::endl;
 
     SF_INFO info;
 
@@ -16,7 +16,7 @@ namespace iamaprogrammer {
     const char* pathCStr = pathStr.c_str();
 
     // Open file
-    std::cout << "\tAttempting to open file: " << filePath << std::endl;
+    // std::cout << "\tAttempting to open file: " << filePath << std::endl;
     this->file = sf_open(pathCStr, SFM_READ, &info);
     if (this->file == nullptr) {
       std::cout << "\tError opening file: " << pathCStr << std::endl;
@@ -28,10 +28,10 @@ namespace iamaprogrammer {
     this->audioFileDescriptor.channels = info.channels;
     this->audioFileDescriptor.sampleRate = info.samplerate;
 
-    std::cout << "\tOpened file: " << filePath << std::endl;
-    std::cout << "\t\tFrame Count: " << info.frames << std::endl;
-    std::cout << "\t\tChannels: " << info.channels << std::endl;
-    std::cout << "\t\tSample Rate: " << info.samplerate << std::endl;
+    // std::cout << "\tOpened file: " << filePath << std::endl;
+    // std::cout << "\t\tFrame Count: " << info.frames << std::endl;
+    // std::cout << "\t\tChannels: " << info.channels << std::endl;
+    // std::cout << "\t\tSample Rate: " << info.samplerate << std::endl;
   }
 
   size_t SndlibAudioDecoder::read(float* buffer) {

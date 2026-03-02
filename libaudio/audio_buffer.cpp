@@ -1,13 +1,13 @@
-#include "audio_buffer.h"
+#include "libaudio/audio_buffer.h"
 
 namespace iamaprogrammer {
   AudioBuffer::AudioBuffer(AudioFileDescriptor& audioFileDescriptor, int framesReadCount):
     audioFileDescriptor(audioFileDescriptor),
     framesReadCount(framesReadCount)
   {
-    std::cout << "BUFFER" << std::endl;
-    std::cout << "\tCreated Shared Buffer: " << std::endl;
-    std::cout << "\t\tFrames Per Buffer: " << this->framesReadCount << std::endl;
+    //std::cout << "BUFFER" << std::endl;
+    //std::cout << "\tCreated Shared Buffer: " << std::endl;
+    //std::cout << "\t\tFrames Per Buffer: " << this->framesReadCount << std::endl;
   }
 
   void AudioBuffer::push(AudioChunk& chunk) {

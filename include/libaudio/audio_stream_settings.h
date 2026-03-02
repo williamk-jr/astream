@@ -1,7 +1,7 @@
 #pragma once
 
 namespace iamaprogrammer {
-  enum class ReaderType {
+  enum class DecoderType {
     SNDLIB
   };
 
@@ -14,8 +14,8 @@ namespace iamaprogrammer {
   };
 
 
-  struct ReaderSettings {
-    ReaderType readerType;
+  struct DecoderSettings {
+    DecoderType readerType;
     int bufferSize = 1024;
   };
 
@@ -29,7 +29,7 @@ namespace iamaprogrammer {
   
 
   struct AudioStreamSettings {
-    ReaderSettings readerSettings;
+    DecoderSettings readerSettings;
     ResamplerSettings resamplerSettings;
     StreamSettings streamSettings;
   };

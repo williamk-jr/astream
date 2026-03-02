@@ -1,9 +1,9 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
-#include <audio_stream.h>
-#include <audio_stream_factory.h>
-#include <backends/port_audio_backend.h>
+#include <libaudio/audio_stream.h>
+#include <libaudio/audio_stream_factory.h>
+#include <libaudio/backends/port_audio_backend.h>
 
 int main() {
   std::cout << "hello world" << "\n";

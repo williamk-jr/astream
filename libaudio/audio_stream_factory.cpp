@@ -1,4 +1,4 @@
-#include "audio_stream_factory.h"
+#include "libaudio/audio_stream_factory.h"
 
 namespace iamaprogrammer {
     AudioStream AudioStreamFactory::fromFile(const IAudioBackend& backend, const std::string& filePath, AudioStreamSettings settings) {
@@ -13,7 +13,7 @@ namespace iamaprogrammer {
 
     AudioStream AudioStreamFactory::fromFile(const IAudioBackend& backend, const std::string& filePath) {
         AudioStreamSettings settings;
-        settings.readerSettings.readerType = ReaderType::SNDLIB;
+        settings.readerSettings.readerType = DecoderType::SNDLIB;
         settings.resamplerSettings.resamplerType = ResamplerType::SR;
         settings.streamSettings.streamType = StreamType::PORTAUDIO;
 
@@ -31,7 +31,7 @@ namespace iamaprogrammer {
 
     std::unique_ptr<IAudioDecoder> AudioStreamFactory::createDecoder(AudioStreamSettings settings) {
       switch (settings.readerSettings.readerType) {
-          case ReaderType::SNDLIB:
+          case DecoderType::SNDLIB:
               return std::make_unique<SndlibAudioDecoder>(settings.readerSettings.bufferSize);
           default:
               throw std::runtime_error("Unsupported reader type");
