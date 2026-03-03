@@ -1,17 +1,17 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
-#include <libaudio/audio_stream.h>
-#include <libaudio/audio_stream_factory.h>
-#include <libaudio/backends/port_audio_backend.h>
+#include <astream/audio_stream.h>
+#include <astream/audio_stream_factory.h>
+#include <astream/backends/port_audio_backend.h>
 
 int main() {
   std::cout << "hello world" << "\n";
-  iamaprogrammer::PortAudioBackend backend;
+  astream::PortAudioBackend backend;
   backend.initialize();
 
-  iamaprogrammer::AudioStream audioStream = 
-      iamaprogrammer::AudioStreamFactory::fromFile(backend, "test_files/test.mp3");
+  astream::AudioStream audioStream = 
+      astream::AudioStreamFactory::fromFile(backend, "test_files/test.mp3");
 
   std::cout << "Duration (Seconds): " << audioStream.durationInSeconds() << "\n";
   std::cout << "Duration (Milliseconds): " << audioStream.durationInMilliseconds() << "\n";
