@@ -13,9 +13,10 @@ namespace astream {
     SndlibAudioDecoder();
     SndlibAudioDecoder(int readSize);
 
-    void open(std::filesystem::path filePath) override;
+  protected:
+    bool open(std::filesystem::path filePath) override;
     size_t read(float* buffer) override;
-    void seek(size_t frames, int whence) override;
+    bool seek(size_t frames, int whence) override;
 
     AudioFileDescriptor& getAudioFileDescriptor() override;
     int getFrameReadCount() override;

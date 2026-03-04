@@ -5,12 +5,21 @@ namespace astream {
 
   AudioChunk::AudioChunk() {}
 
-  AudioChunk::AudioChunk(long size) : size(size) {
-    this->buffer = std::vector<float>(size);
+  AudioChunk::AudioChunk(int channels, long frameCount) 
+    : channels(channels), frameCount(frameCount) {
+    this->buffer = std::vector<float>(frameCount * channels);
   }
 
-  long AudioChunk::getSize() {
-    return this->size;
+  size_t AudioChunk::getSize() {
+    return this->buffer.capacity();
+  }
+
+  int AudioChunk::getChannelCount() {
+    return this->channels;
+  }
+  
+  long AudioChunk::getFrameCount() {
+    return this->frameCount;
   }
 
   std::vector<float>* AudioChunk::data() {

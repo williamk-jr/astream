@@ -1,18 +1,18 @@
 #include "astream/audio_buffer.h"
 
 namespace astream {
-  AudioBuffer::AudioBuffer(AudioFileDescriptor& audioFileDescriptor, int framesReadCount):
-    audioFileDescriptor(audioFileDescriptor),
+  AudioBuffer::AudioBuffer(int channels, long framesReadCount):
+    channels(channels),
     framesReadCount(framesReadCount)
-  {
-    //std::cout << "BUFFER" << std::endl;
-    //std::cout << "\tCreated Shared Buffer: " << std::endl;
-    //std::cout << "\t\tFrames Per Buffer: " << this->framesReadCount << std::endl;
-  }
+  {}
 
   void AudioBuffer::push(AudioChunk& chunk) {
-    if (chunk.getSize() != this->framesReadCount * this->audioFileDescriptor.channels) {
-      throw std::runtime_error("Mismatch between chunk size and frames per buffer. " + std::to_string(chunk.getSize()) + " vs " + std::to_string(this->framesReadCount * this->audioFileDescriptor.channels));
+    if (chunk.getFrameCount() != this->getFrameReadCount() || 
+        chunk.getChannelCount() != this->getChannelCount()) {
+      throw std::runtime_error("Mismatch between chunk size and frames per buffer. " + 
+                                std::to_string(chunk.getSize()) + " vs " + 
+                                std::to_string(this->framesReadCount * this->channels)
+      );
     }
     this->buffer.push(chunk);
   }
@@ -33,11 +33,12 @@ namespace astream {
     return this->buffer.empty();
   }
 
-  const AudioFileDescriptor& AudioBuffer::getAudioFileDescriptor() {
-    return this->audioFileDescriptor;
+  const long AudioBuffer::getFrameReadCount() {
+    return this->framesReadCount;
   }
 
-  const int AudioBuffer::getFrameReadCount() {
-    return this->framesReadCount;
+
+  int AudioBuffer::getChannelCount() {
+    return this->channels;
   }
 }

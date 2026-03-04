@@ -15,7 +15,7 @@ namespace astream {
         /*
         @brief Opens the audio file.
         */
-        void open(std::filesystem::path filePath);
+        bool open(std::filesystem::path filePath);
 
         /*
         @brief Reads audio into the provided buffer.

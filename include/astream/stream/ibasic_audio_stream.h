@@ -37,12 +37,12 @@ namespace astream {
   public:
     IBasicAudioStream(AudioReader& reader) {
       this->audioBuffer = std::make_unique<AudioBuffer>(
-        reader.getAudioFileDescriptor(), 
+        reader.getAudioFileDescriptor().channels, 
         reader.getFrameReadCount() * reader.getSampleRateConversionRatio()
       );
 
       this->audioStreamData = std::make_unique<AudioStreamData>(
-        this->audioBuffer->getAudioFileDescriptor(),
+        reader.getAudioFileDescriptor(),
         *this->audioBuffer
       );
     }

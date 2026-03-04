@@ -9,7 +9,7 @@ namespace astream {
     SRAudioResampler(double deviceSampleRate);
   
   protected:
-    void open(AudioFileDescriptor& fileDescriptor, int readSize, float* readBuffer) override;
+    bool open(AudioFileDescriptor& fileDescriptor, int readSize, float* readBuffer) override;
     void resample(void* writeBuffer) override;
     double getSampleRateConversionRatio() override;
     void close() override;

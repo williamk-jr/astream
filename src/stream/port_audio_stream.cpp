@@ -5,17 +5,10 @@ namespace astream {
   PortAudioStream::PortAudioStream(AudioReader& reader) : IBasicAudioStream(reader) {}
 
   void PortAudioStream::openStream() {
-   // std::cout << "AUDIO STREAM" << std::endl;
-   // std::cout << "\tGetting Output Device." << std::endl;
-
     // PaDeviceIndex devicesCount = Pa_GetDeviceCount();
-    // std::cout << "\tDevice Count: " << devicesCount << std::endl;
     // for (PaDeviceIndex device = 0; device < devicesCount; device++) {
     //  const PaDeviceInfo* deviceInfo = Pa_GetDeviceInfo(device);
 
-     // std::cout << "\tDevice " << device << ": " << deviceInfo->name << std::endl;
-     // std::cout << "\t\tDefault Samplerate: " << deviceInfo->defaultSampleRate << std::endl;
-     // std::cout << "\t\tDefault Samplerate: " << deviceInfo->defaultSampleRate << std::endl;
     // }
 
     PaDeviceIndex device = Pa_GetDefaultOutputDevice();
@@ -23,16 +16,10 @@ namespace astream {
     
     PaStreamParameters outputParameters;
     outputParameters.device = device;
-    outputParameters.channelCount = this->audioBuffer->getAudioFileDescriptor().channels;
+    outputParameters.channelCount = this->audioStreamData->data.channels;
     outputParameters.sampleFormat = paFloat32;
     outputParameters.suggestedLatency = deviceInfo->defaultLowOutputLatency;
     outputParameters.hostApiSpecificStreamInfo = NULL;
-
-    //std::cout << "\tStream Parameters: " << std::endl;
-    //std::cout << "\t\tDevice Index: " << outputParameters.device << std::endl;
-    //std::cout << "\t\tChannel Count: " << outputParameters.channelCount << std::endl;
-    //std::cout << "\t\tSample Format: " << outputParameters.sampleFormat << std::endl;
-    //std::cout << "\t\tLatency: " << outputParameters.suggestedLatency << std::endl;
 
     this->error = Pa_OpenStream(
       &this->stream,
@@ -46,7 +33,6 @@ namespace astream {
     );
 
     Pa_SetStreamFinishedCallback(this->stream, paStreamFinishedCallback);
-    //std::cout << "\tCreated Audio Stream." << std::endl;
   }
 
   void PortAudioStream::closeStream() {

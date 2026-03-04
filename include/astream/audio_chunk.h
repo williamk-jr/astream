@@ -5,13 +5,16 @@ namespace astream {
   class AudioChunk {
   public:
     AudioChunk();
-    AudioChunk(long size);
+    AudioChunk(int channels, long frameCount);
 
     std::vector<float>* data();
-    long getSize();
+    int getChannelCount();
+    long getFrameCount();
+    size_t getSize();
 
   private:
-    long size = 0;
+    int channels;
+    long frameCount;
     std::vector<float> buffer;
   };
 };

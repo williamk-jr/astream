@@ -11,7 +11,7 @@
 namespace astream {
   class AudioBuffer {
   public:
-    AudioBuffer(AudioFileDescriptor& audioFileDescriptor, int framesReadCount);
+    AudioBuffer(int channels, long framesReadCount);
 
     void push(AudioChunk& chunk);
 
@@ -23,14 +23,14 @@ namespace astream {
 
     bool isEmpty();
 
-    const AudioFileDescriptor& getAudioFileDescriptor();
+    const long getFrameReadCount();
 
-    const int getFrameReadCount();
+    int getChannelCount();
 
   private:
     std::queue<AudioChunk> buffer;
     
-    AudioFileDescriptor& audioFileDescriptor;
+    int channels;
     long framesReadCount;
   };
 }

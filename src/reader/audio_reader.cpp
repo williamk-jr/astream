@@ -7,25 +7,32 @@ namespace astream {
         this->resampler = std::move(resampler);
     }
 
-    void AudioReader::open(std::filesystem::path filePath) {
-        this->decoder->open(filePath);
-        this->resampler->open(
+    bool AudioReader::open(std::filesystem::path filePath) {
+        if(!this->decoder->open(filePath)) {
+          return false;
+        }
+
+        if (!this->resampler->open(
             this->decoder->getAudioFileDescriptor(), 
             this->decoder->getFrameReadCount(), 
             this->readBuffer.data()
-        );
+        )) {
+          return false;
+        }
 
         this->readBuffer = std::vector<float>(
             this->decoder->getFrameReadCount() * this->decoder->getAudioFileDescriptor().channels
         );
+
+        return true;
     }
 
     size_t AudioReader::read(AudioBuffer& buffer) {
         double srConvertionRatio = this->resampler->getSampleRateConversionRatio();
-        long chunkSize = (this->decoder->getFrameReadCount() * srConvertionRatio) 
-                        * this->decoder->getAudioFileDescriptor().channels;
+        long frameCount = this->decoder->getFrameReadCount() * srConvertionRatio;
+        int channels = this->decoder->getAudioFileDescriptor().channels;
 
-        AudioChunk chunk(chunkSize);
+        AudioChunk chunk(channels, frameCount);
         size_t readCount = this->decoder->read(this->readBuffer.data());
 
         // Transfer data from read buffer to chunk buffer.

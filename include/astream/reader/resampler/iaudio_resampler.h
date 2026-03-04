@@ -10,7 +10,7 @@ namespace astream {
   public:
     virtual ~IAudioResampler() = default;
 
-    virtual void open(AudioFileDescriptor& fileDescriptor, int readSize, float* readBuffer) = 0;
+    virtual bool open(AudioFileDescriptor& fileDescriptor, int readSize, float* readBuffer) = 0;
 
     virtual void resample(void* buffer) = 0;
 

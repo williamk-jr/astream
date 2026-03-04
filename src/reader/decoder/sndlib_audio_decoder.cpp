@@ -6,9 +6,7 @@ namespace astream {
   SndlibAudioDecoder::SndlibAudioDecoder(int frameReadCount): 
     frameReadCount(frameReadCount) {}
 
-  void SndlibAudioDecoder::open(std::filesystem::path filePath) {
-    // std::cout << "READER" << std::endl;
-
+  bool SndlibAudioDecoder::open(std::filesystem::path filePath) {
     SF_INFO info;
 
     // Format file path
@@ -16,30 +14,24 @@ namespace astream {
     const char* pathCStr = pathStr.c_str();
 
     // Open file
-    // std::cout << "\tAttempting to open file: " << filePath << std::endl;
     this->file = sf_open(pathCStr, SFM_READ, &info);
     if (this->file == nullptr) {
-      std::cout << "\tError opening file: " << pathCStr << std::endl;
-      std::cout << "\t" << sf_strerror(this->file) << std::endl;
-      return;
+      return false;
     }
 
     this->audioFileDescriptor.frames = info.frames;
     this->audioFileDescriptor.channels = info.channels;
     this->audioFileDescriptor.sampleRate = info.samplerate;
-
-    // std::cout << "\tOpened file: " << filePath << std::endl;
-    // std::cout << "\t\tFrame Count: " << info.frames << std::endl;
-    // std::cout << "\t\tChannels: " << info.channels << std::endl;
-    // std::cout << "\t\tSample Rate: " << info.samplerate << std::endl;
+    return true;
   }
 
   size_t SndlibAudioDecoder::read(float* buffer) {
     return sf_readf_float(this->file, buffer, this->frameReadCount);
   }
 
-  void SndlibAudioDecoder::seek(size_t frames, int whence) {
+  bool SndlibAudioDecoder::seek(size_t frames, int whence) {
     sf_seek(this->file, frames, whence);
+    return true; // TODO: Proper error handling.
   }
 
   AudioFileDescriptor& SndlibAudioDecoder::getAudioFileDescriptor() {

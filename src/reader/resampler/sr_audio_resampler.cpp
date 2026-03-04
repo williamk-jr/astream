@@ -3,12 +3,9 @@
 namespace astream {
   SRAudioResampler::SRAudioResampler(double deviceSampleRate) : deviceSampleRate(deviceSampleRate) {}
 
-  void SRAudioResampler::open(AudioFileDescriptor& fileDescriptor, int readSize, float* readBuffer) {
-    // std::cout << "RESAMPLER" << std::endl;
-
+  bool SRAudioResampler::open(AudioFileDescriptor& fileDescriptor, int readSize, float* readBuffer) {
     this->sampleRateConversionRatio = deviceSampleRate / fileDescriptor.sampleRate;
 
-    // std::cout << "\tAttempting to create resampler." << std::endl;
     this->srcState = src_new(SRC_SINC_FASTEST, fileDescriptor.channels, &this->error);
     this->srcData.data_in = readBuffer;
     this->srcData.input_frames = readSize;
@@ -16,11 +13,7 @@ namespace astream {
     this->srcData.src_ratio = this->sampleRateConversionRatio;
     this->srcData.end_of_input = 0;
 
-    // std::cout << "\tResampler created: " << std::endl;
-    // std::cout << "\t\tRead Buffer Address: " << this->srcData.data_in << std::endl;
-    // std::cout << "\t\tInput Frame Count: " << this->srcData.input_frames << std::endl;
-    // std::cout << "\t\tOutput Frame Count: " << this->srcData.output_frames << std::endl;
-    // std::cout << "\t\tConversion Ratio: " << this->srcData.src_ratio << std::endl;
+    return true;
   }
 
   void SRAudioResampler::resample(void* buffer) {
