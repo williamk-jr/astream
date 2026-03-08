@@ -1,7 +1,5 @@
 #include "astream/audio_stream.h"
 
-#include <string>
-
 namespace astream {
   int AudioStream::MAX_LOADED_CHUNKS = 20;
 
@@ -12,28 +10,35 @@ namespace astream {
     basicAudioStream(std::move(stream))
   {};
   
-  void AudioStream::setup() {
+  ErrorCode AudioStream::setup() {
     if (this->streamState == StreamState::OPEN) {
-      throw std::runtime_error("Stream is already open.");
+      return ErrorCode::STREAM_ALREADY_OPEN;
+    }
+
+    AudioFileDescriptor& audioData = this->reader->getAudioFileDescriptor();
+    this->audioReaderThread = std::thread([this](){ audioReaderThreadCallback(); }); // Start reader thread.
+
+    ErrorCode error = this->basicAudioStream->openStream();
+    if (error != ErrorCode::SUCCESS) {
+      return error;
     }
 
     this->streamState = StreamState::OPEN;
-    AudioFileDescriptor& audioData = this->reader->getAudioFileDescriptor();
-
-    this->audioReaderThread = std::thread([this](){ audioReaderThreadCallback(); }); // Start reader thread.
-
-    this->basicAudioStream->openStream();
-    this->handleError();
+    return ErrorCode::SUCCESS;
   }
 
-  void AudioStream::start() {
+  ErrorCode AudioStream::start() {
     if (this->basicAudioStream->isStreamStopped()) {
-      std::cout << "Starting stream." << std::endl;
-      this->basicAudioStream->startStream();
-      this->handleError();
-
-      this->playingState = PlayingState::PLAYING;
+      return ErrorCode::STREAM_ALREADY_STOPPED;
     }
+
+    ErrorCode error = this->basicAudioStream->startStream();
+    if (error != ErrorCode::SUCCESS) {
+      return error;
+    }
+
+    this->playingState = PlayingState::PLAYING;
+    return ErrorCode::SUCCESS;
   }
 
   void AudioStream::seek(float seconds) {
@@ -50,28 +55,36 @@ namespace astream {
     this->playingState = PlayingState::PLAYING;
   }
 
-  void AudioStream::stop() {
-    if (this->basicAudioStream->isStreamActive()) {
-      this->basicAudioStream->stopStream();
-      this->handleError();
-      this->playingState = PlayingState::STOPPED;
+  ErrorCode AudioStream::stop() {
+    if (!this->basicAudioStream->isStreamActive()) {
+      return ErrorCode::STREAM_NOT_ACTIVE;
     }
+
+    ErrorCode error = this->basicAudioStream->stopStream();
+    if (error != ErrorCode::SUCCESS) {
+      return error;
+    }
+
+    this->playingState = PlayingState::STOPPED;
+    return ErrorCode::SUCCESS;
   }
 
-  void AudioStream::end() {
+  ErrorCode AudioStream::end() {
     if (this->streamState == StreamState::CLOSED) {
-      throw std::runtime_error("Stream is already closed.");
+      return ErrorCode::STREAM_ALREADY_CLOSED;
     }
-    this->streamState = StreamState::CLOSED;
 
     if (this->audioReaderThread.joinable()) {
-      std::cout << "Joining audio reader thread." << std::endl;
       this->audioReaderThread.join();
-      std::cout << "Audio reader thread joined." << std::endl;
     }
 
-    this->basicAudioStream->closeStream();
-    this->handleError();
+    ErrorCode error = this->basicAudioStream->closeStream();
+    if (error != ErrorCode::SUCCESS) {
+      return error;
+    }
+
+    this->streamState = StreamState::CLOSED;
+    return ErrorCode::SUCCESS;
   }
 
   long AudioStream::position() {
@@ -102,12 +115,6 @@ namespace astream {
   }
 
   // Private
-  void AudioStream::handleError() {
-    if (this->basicAudioStream->hasError()) {
-      throw std::runtime_error("PortAudio error: " + this->basicAudioStream->getError());
-    }
-  }
-
   void AudioStream::audioReaderThreadCallback() {
     while (this->streamState != StreamState::CLOSED) {
 
@@ -115,7 +122,7 @@ namespace astream {
         continue;
       }
 
-      size_t readSize = this->reader->read(this->basicAudioStream->getAudioBuffer());
+      Result<size_t> readSize = this->reader->read(this->basicAudioStream->getAudioBuffer());
     }
     this->reader->close();
   }

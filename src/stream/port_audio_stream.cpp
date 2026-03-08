@@ -1,10 +1,12 @@
 #include "astream/stream/port_audio_stream.h"
+#include "astream/error.h"
+#include <portaudio.h>
 
 namespace astream {
 
   PortAudioStream::PortAudioStream(AudioReader& reader) : IBasicAudioStream(reader) {}
 
-  void PortAudioStream::openStream() {
+  ErrorCode PortAudioStream::openStream() {
     // PaDeviceIndex devicesCount = Pa_GetDeviceCount();
     // for (PaDeviceIndex device = 0; device < devicesCount; device++) {
     //  const PaDeviceInfo* deviceInfo = Pa_GetDeviceInfo(device);
@@ -21,7 +23,7 @@ namespace astream {
     outputParameters.suggestedLatency = deviceInfo->defaultLowOutputLatency;
     outputParameters.hostApiSpecificStreamInfo = NULL;
 
-    this->error = Pa_OpenStream(
+    PaError error = Pa_OpenStream(
       &this->stream,
       NULL,
       &outputParameters,
@@ -32,16 +34,29 @@ namespace astream {
       &this->audioStreamData
     );
 
+    if (error != paNoError) {
+      return ErrorCode::STREAM_OPEN_FAILURE;
+    }
+
     Pa_SetStreamFinishedCallback(this->stream, paStreamFinishedCallback);
+    return ErrorCode::SUCCESS;
   }
 
-  void PortAudioStream::closeStream() {
-    this->error = Pa_CloseStream(this->stream);
+  ErrorCode PortAudioStream::closeStream() {
+    PaError error = Pa_CloseStream(this->stream);
+    if (error != paNoError) {
+      return ErrorCode::STREAM_CLOSE_FAILURE;
+    }
+    return ErrorCode::SUCCESS;
   }
 
-  void PortAudioStream::startStream() {
+  ErrorCode PortAudioStream::startStream() {
     this->audioStreamData->streamFinished = false;
-    this->error = Pa_StartStream(this->stream);
+    PaError error = Pa_StartStream(this->stream);
+    if (error != paNoError) {
+      return ErrorCode::STREAM_START_FAILURE;
+    }
+    return ErrorCode::SUCCESS;
   }
 
   void PortAudioStream::seekStream(int frames) {
@@ -49,8 +64,12 @@ namespace astream {
     this->audioStreamData->seeking = true;
   }
 
-  void PortAudioStream::stopStream() {
-    this->error = Pa_StopStream(this->stream);
+  ErrorCode PortAudioStream::stopStream() {
+    PaError error = Pa_StopStream(this->stream);
+    if (error != paNoError) {
+      return ErrorCode::STREAM_STOP_FAILURE;
+    }
+    return ErrorCode::SUCCESS;
   }
 
   bool PortAudioStream::isStreamFinished() {

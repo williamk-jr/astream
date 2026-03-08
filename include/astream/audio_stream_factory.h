@@ -1,16 +1,12 @@
 #pragma once
-#include "audio_stream.h"
-#include "audio_stream_settings.h"
 
-#include "reader/audio_reader.h"
-
-#include "reader/decoder/sndlib_audio_decoder.h"
-
-#include "reader/resampler/sr_audio_resampler.h"
-
-#include "stream/port_audio_stream.h"
-
-#include "backends/iaudio_backend.h"
+#include "astream/audio_stream.h"
+#include "astream/audio_stream_settings.h"
+#include "astream/reader/audio_reader.h"
+#include "astream/reader/decoder/sndlib_audio_decoder.h"
+#include "astream/reader/resampler/sr_audio_resampler.h"
+#include "astream/stream/port_audio_stream.h"
+#include "astream/backends/iaudio_backend.h"
 
 namespace astream {
   

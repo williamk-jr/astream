@@ -1,14 +1,12 @@
 #pragma once
-#include "../../audio_file_descriptor.h"
-#include "../../audio_chunk.h"
-#include "../../audio_buffer.h"
-
-#include <queue>
 #include <filesystem>
+
+#include "astream/audio_file_descriptor.h"
+#include "astream/error.h"
 
 namespace astream {
   class AudioReader;
-
+  
   class IAudioDecoder {
     friend class AudioReader;
     friend class IAudioResampler;
@@ -21,18 +19,18 @@ namespace astream {
       /*
       @brief Opens the audio file.
       */
-      virtual bool open(std::filesystem::path filePath) = 0;
+      virtual ErrorCode open(std::filesystem::path filePath) = 0;
 
       /*
       @brief Reads audio into the provided buffer.
       @return The number of frames read. This can be less than the requested frame count if the end of the file is reached.
       */
-      virtual size_t read(float* buffer) = 0;
+      virtual Result<size_t> read(float* buffer) = 0;
 
       /*
       @brief Seeks a specified number of frames from a specified position. The position is determined by the whence parameter, which can be SEEK_SET, SEEK_CUR, or SEEK_END.
       */
-      virtual bool seek(size_t frames, int whence) = 0;
+      virtual ErrorCode seek(size_t frames, int whence) = 0;
 
 
       /*
@@ -48,6 +46,6 @@ namespace astream {
       /*
       @brief Closes the audio file reader.
       */
-      virtual void close() = 0;
+      virtual ErrorCode close() = 0;
   };
 }

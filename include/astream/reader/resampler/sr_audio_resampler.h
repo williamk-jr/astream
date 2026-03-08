@@ -1,7 +1,7 @@
 #pragma once
-#include "iaudio_resampler.h"
-#include "../decoder/iaudio_decoder.h"
 #include <samplerate.h>
+
+#include "iaudio_resampler.h"
 
 namespace astream {
   class SRAudioResampler: public IAudioResampler {
@@ -9,10 +9,10 @@ namespace astream {
     SRAudioResampler(double deviceSampleRate);
   
   protected:
-    bool open(AudioFileDescriptor& fileDescriptor, int readSize, float* readBuffer) override;
-    void resample(void* writeBuffer) override;
+    ErrorCode open(AudioFileDescriptor& fileDescriptor, int readSize, float* readBuffer) override;
+    ErrorCode resample(void* writeBuffer) override;
     double getSampleRateConversionRatio() override;
-    void close() override;
+    ErrorCode close() override;
 
   private:
     SRC_STATE* srcState; // Samplerate Converter state
@@ -20,6 +20,5 @@ namespace astream {
 
     double sampleRateConversionRatio;
     double deviceSampleRate;
-    int error = 0;
   };
 }

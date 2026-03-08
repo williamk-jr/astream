@@ -2,6 +2,7 @@
 #include "astream/reader/decoder/sndlib_audio_decoder.h"
 #include "astream/reader/resampler/iaudio_resampler.h"
 #include "astream/reader/resampler/sr_audio_resampler.h"
+#include "astream/error.h"
 #include <catch2/catch_test_macros.hpp>
 #include <astream/reader/audio_reader.h>
 #include <memory>
@@ -21,10 +22,10 @@ TEST_CASE("Test Audio Reader.", "[reader]") {
       SECTION("Test Decoders & Resamplers") {
         astream::AudioReader reader(std::move(decoder), std::move(resampler));
 
-        REQUIRE(reader.open("test_files/test.mp3"));
+        REQUIRE(reader.open("test_files/test.mp3") == astream::ErrorCode::SUCCESS);
         //reader.getAudioFileDescriptor()
 
-        reader.close();
+        REQUIRE(reader.close() == astream::ErrorCode::SUCCESS);
       }
     }
   }

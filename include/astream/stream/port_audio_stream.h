@@ -1,23 +1,21 @@
 #pragma once
-#include "ibasic_audio_stream.h"  
-
-#include <queue>
-#include <stdexcept>
 #include <portaudio.h>
-#include "../audio_chunk.h"
-#include "../audio_file_descriptor.h"
+
+#include "astream/audio_chunk.h"
+#include "astream/stream/ibasic_audio_stream.h"  
+#include "astream/audio_file_descriptor.h"
 
 namespace astream {
   class PortAudioStream : public IBasicAudioStream {
   public:
     PortAudioStream(AudioReader& reader);
 
-    void openStream() override;
-    void closeStream() override;
+    ErrorCode openStream() override;
+    ErrorCode closeStream() override;
 
-    void startStream() override;
+    ErrorCode startStream() override;
     void seekStream(int frames) override;
-    void stopStream() override;
+    ErrorCode stopStream() override;
 
     bool isStreamFinished() override;
     bool isStreamStopped() override;

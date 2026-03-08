@@ -3,10 +3,10 @@
 #include <string>
 #include <atomic>
 #include <memory>
-#include "../reader/decoder/iaudio_decoder.h"
-#include "../reader/resampler/iaudio_resampler.h"
-#include "../reader/audio_reader.h"
-#include "../audio_buffer.h"
+#include "astream/reader/decoder/iaudio_decoder.h"
+#include "astream/reader/resampler/iaudio_resampler.h"
+#include "astream/reader/audio_reader.h"
+#include "astream/audio_buffer.h"
 
 namespace astream {
 
@@ -49,12 +49,12 @@ namespace astream {
 
     virtual ~IBasicAudioStream() = default;
 
-    virtual void openStream() = 0;
-    virtual void closeStream() = 0;
+    virtual ErrorCode openStream() = 0;
+    virtual ErrorCode closeStream() = 0;
 
-    virtual void startStream() = 0;
+    virtual ErrorCode startStream() = 0;
     virtual void seekStream(int frames) = 0;
-    virtual void stopStream() = 0;
+    virtual ErrorCode stopStream() = 0;
 
     virtual bool isStreamFinished() = 0;
     virtual bool isStreamStopped() = 0;

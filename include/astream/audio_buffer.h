@@ -1,19 +1,16 @@
 #pragma once
-#include <sndfile.h>
 #include <queue>
-#include <filesystem>
-#include <iostream>
+#include <sndfile.h>
 
-#include "audio_chunk.h"
-#include "audio_file_descriptor.h"
-
+#include "astream/audio_chunk.h"
+#include "astream/error.h"
 
 namespace astream {
   class AudioBuffer {
   public:
     AudioBuffer(int channels, long framesReadCount);
 
-    void push(AudioChunk& chunk);
+    ErrorCode push(AudioChunk& chunk);
 
     AudioChunk& front();
 

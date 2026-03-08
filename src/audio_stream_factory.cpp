@@ -1,4 +1,5 @@
 #include "astream/audio_stream_factory.h"
+#include "astream/audio_device.h"
 
 namespace astream {
     AudioStream AudioStreamFactory::fromFile(const IAudioBackend& backend, const std::string& filePath, AudioStreamSettings settings) {
@@ -39,9 +40,11 @@ namespace astream {
     }
 
     std::unique_ptr<IAudioResampler> AudioStreamFactory::createResampler(AudioStreamSettings settings, const IAudioBackend& backend) {
+      AudioDevice device = backend.getDefaultAudioDevice().get();
+
       switch (settings.resamplerSettings.resamplerType) {
           case ResamplerType::SR:
-              return std::make_unique<SRAudioResampler>(backend.getDefaultAudioDevice().samplerate);
+              return std::make_unique<SRAudioResampler>(device.samplerate);
           default:
               throw std::runtime_error("Unsupported resampler type");
       }

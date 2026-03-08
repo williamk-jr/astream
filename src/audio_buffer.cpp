@@ -1,4 +1,5 @@
 #include "astream/audio_buffer.h"
+#include "astream/error.h"
 
 namespace astream {
   AudioBuffer::AudioBuffer(int channels, long framesReadCount):
@@ -6,15 +7,18 @@ namespace astream {
     framesReadCount(framesReadCount)
   {}
 
-  void AudioBuffer::push(AudioChunk& chunk) {
+  ErrorCode AudioBuffer::push(AudioChunk& chunk) {
     if (chunk.getFrameCount() != this->getFrameReadCount() || 
         chunk.getChannelCount() != this->getChannelCount()) {
-      throw std::runtime_error("Mismatch between chunk size and frames per buffer. " + 
-                                std::to_string(chunk.getSize()) + " vs " + 
-                                std::to_string(this->framesReadCount * this->channels)
-      );
+
+      return ErrorCode::BUFFER_CHUNK_SIZE_MISMATCH; 
+      //throw std::runtime_error("Mismatch between chunk size and frames per buffer. " + 
+      //                          std::to_string(chunk.getSize()) + " vs " + 
+      //                          std::to_string(this->framesReadCount * this->channels)
+      //);
     }
     this->buffer.push(chunk);
+    return ErrorCode::SUCCESS;
   }
 
   AudioChunk& AudioBuffer::front() {

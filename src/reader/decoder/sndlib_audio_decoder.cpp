@@ -1,4 +1,5 @@
 #include "astream/reader/decoder/sndlib_audio_decoder.h"
+#include "astream/error.h"
 
 namespace astream {
   SndlibAudioDecoder::SndlibAudioDecoder() {}
@@ -6,7 +7,7 @@ namespace astream {
   SndlibAudioDecoder::SndlibAudioDecoder(int frameReadCount): 
     frameReadCount(frameReadCount) {}
 
-  bool SndlibAudioDecoder::open(std::filesystem::path filePath) {
+  ErrorCode SndlibAudioDecoder::open(std::filesystem::path filePath) {
     SF_INFO info;
 
     // Format file path
@@ -16,22 +17,23 @@ namespace astream {
     // Open file
     this->file = sf_open(pathCStr, SFM_READ, &info);
     if (this->file == nullptr) {
-      return false;
+      return ErrorCode::DECODER_FILE_OPEN_FAILURE;
     }
 
     this->audioFileDescriptor.frames = info.frames;
     this->audioFileDescriptor.channels = info.channels;
     this->audioFileDescriptor.sampleRate = info.samplerate;
-    return true;
+    return ErrorCode::SUCCESS;
   }
 
-  size_t SndlibAudioDecoder::read(float* buffer) {
-    return sf_readf_float(this->file, buffer, this->frameReadCount);
+  Result<size_t> SndlibAudioDecoder::read(float* buffer) {
+    size_t readCount = sf_readf_float(this->file, buffer, this->frameReadCount);
+    return Result<size_t>::success(readCount);
   }
 
-  bool SndlibAudioDecoder::seek(size_t frames, int whence) {
+  ErrorCode SndlibAudioDecoder::seek(size_t frames, int whence) {
     sf_seek(this->file, frames, whence);
-    return true; // TODO: Proper error handling.
+    return ErrorCode::SUCCESS; // TODO: Proper error handling.
   }
 
   AudioFileDescriptor& SndlibAudioDecoder::getAudioFileDescriptor() {
@@ -42,7 +44,10 @@ namespace astream {
     return this->frameReadCount;
   }
 
-  void SndlibAudioDecoder::close() {
-    sf_close(file);
+  ErrorCode SndlibAudioDecoder::close() {
+    if (sf_close(file) != SF_ERR_NO_ERROR) {
+      return ErrorCode::DECODER_FILE_CLOSE_FAILURE;
+    }
+    return ErrorCode::SUCCESS;
   }
 }

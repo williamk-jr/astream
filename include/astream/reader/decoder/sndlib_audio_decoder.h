@@ -1,10 +1,8 @@
 #pragma once
-#include "iaudio_decoder.h"
 #include <sndfile.h>
-#include <queue>
 #include <filesystem>
-#include <iostream>
 
+#include "astream/reader/decoder/iaudio_decoder.h"
 
 
 namespace astream {
@@ -14,14 +12,14 @@ namespace astream {
     SndlibAudioDecoder(int readSize);
 
   protected:
-    bool open(std::filesystem::path filePath) override;
-    size_t read(float* buffer) override;
-    bool seek(size_t frames, int whence) override;
+    ErrorCode open(std::filesystem::path filePath) override;
+    Result<size_t> read(float* buffer) override;
+    ErrorCode seek(size_t frames, int whence) override;
 
     AudioFileDescriptor& getAudioFileDescriptor() override;
     int getFrameReadCount() override;
 
-    void close() override;
+    ErrorCode close() override;
   private:
     std::filesystem::path path;
     SNDFILE* file;

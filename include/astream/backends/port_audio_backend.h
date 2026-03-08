@@ -1,20 +1,19 @@
 #pragma once
-#include "iaudio_backend.h"
-#include "../stream/port_audio_stream.h"
-#include "../audio_device.h"
 #include <portaudio.h>
-#include <memory>
+
+#include "astream/backends/iaudio_backend.h"
+#include "astream/audio_device.h"
 
 namespace astream {
   class PortAudioBackend : public IAudioBackend {
   public:
     PortAudioBackend();
 
-    void initialize() override;
-    void terminate() override;
+    ErrorCode initialize() override;
+    ErrorCode terminate() override;
 
-    const AudioDevice getDefaultAudioDevice() const override;
-    const AudioDevice getAudioDevice(int id) const override;
+    const Result<AudioDevice> getDefaultAudioDevice() const override;
+    const Result<AudioDevice> getAudioDevice(int id) const override;
   private:
     PaError error;
   };

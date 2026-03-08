@@ -2,10 +2,11 @@
 #include <filesystem>
 #include <memory>
 #include <vector>
-#include <iostream>
-#include "resampler/iaudio_resampler.h"
-#include "decoder/iaudio_decoder.h"
-#include "../audio_buffer.h"
+
+#include "astream/reader/resampler/iaudio_resampler.h"
+#include "astream/reader/decoder/iaudio_decoder.h"
+#include "astream/audio_buffer.h"
+#include "astream/error.h"
 
 namespace astream {
     class AudioReader {
@@ -15,18 +16,18 @@ namespace astream {
         /*
         @brief Opens the audio file.
         */
-        bool open(std::filesystem::path filePath);
+        ErrorCode open(std::filesystem::path filePath);
 
         /*
         @brief Reads audio into the provided buffer.
         @return The number of frames read. This can be less than the requested frame count if the end of the file is reached.
         */
-        size_t read(AudioBuffer& buffer);
+        Result<size_t> read(AudioBuffer& buffer);
 
         /*
         @brief Seeks a specified number of frames from a specified position. The position is determined by the whence parameter, which can be SEEK_SET, SEEK_CUR, or SEEK_END.
         */
-        void seek(size_t frames, int whence);
+        ErrorCode seek(size_t frames, int whence);
 
         /*
         
@@ -46,7 +47,7 @@ namespace astream {
         /*
         @brief Closes the audio file reader.
         */
-        void close();
+        ErrorCode close();
 
         /*
         

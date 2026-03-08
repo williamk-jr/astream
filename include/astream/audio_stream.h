@@ -1,17 +1,10 @@
 #pragma once
 
-#include <iostream>
-#include <filesystem>
-#include <vector>
-#include <queue>
-#include <mutex>
 #include <thread>
 
-#include "audio_chunk.h"
-#include "audio_stream_settings.h"
-#include "audio_file_descriptor.h"
-#include "stream/ibasic_audio_stream.h"
-#include "reader/audio_reader.h"
+#include "astream/stream/ibasic_audio_stream.h"
+#include "astream/reader/audio_reader.h"
+#include "astream/error.h"
 
 namespace astream {
   class AudioStream {
@@ -24,12 +17,12 @@ namespace astream {
       /**
        * @brief Prepare stream for usage.
        */
-      void setup();
+      ErrorCode setup();
 
       /**
        * @brief Start audio stream.
        */
-      void start();
+      ErrorCode start();
 
       /**
        * @brief Fast forward or backward through audio stream.
@@ -40,7 +33,7 @@ namespace astream {
       /**
        * @brief Stop audio stream.
        */
-      void stop();
+      ErrorCode stop();
       
       /**
        * @brief Get current time position in audio stream.
@@ -78,7 +71,7 @@ namespace astream {
       /**
        * @brief End audio stream.
        */
-      void end();
+      ErrorCode end();
 
     private:
 
